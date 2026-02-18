@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <typeinfo>
 using namespace std;
 
 /*
@@ -83,6 +85,10 @@ class DynArr{
     
     }
 
+    int cap(){
+        return capacity;
+    }
+
     void info(){
         int i;
         cout<<"\n[";
@@ -95,17 +101,79 @@ class DynArr{
         cout<<"\nsize: "<<size();
         cout<<"\nresizable: "<<r<<endl;
     }
-};
 
+    int find(T f){
+        int i;
+        for(i=0;i<=itop;i++){
+            if(i!=(itop+1)&&arr[i]==f){return i;}
+            }
+        return -1;   
+    }
 
+    T give(int i){
+
+        if(i<=itop){return arr[i];}
+        
+        return T();}//num array will never be searched so it's okay
+        
+    };
+
+template<typename K, typename V>
 class Dictionary{
+    int dict_cap;
+    bool resize;
+    DynArr<K> keys;
+    DynArr<V> values;
 
-    //I guess I'll just use a pair of coupled DynArrs for now
+    public:
+
+    Dictionary(int capacity=16, bool resize=true):dict_cap(capacity),resize(resize), keys(dict_cap,resize), values(dict_cap, resize){}
+
+    void add(K key, V value){
+        if(keys.find(key)==-1)
+        {
+            keys.add(key);
+            values.add(value);
+        }               
+    }
+    void remove(int i){
+        if(i<keys.size()){
+            keys.remove(i);
+            values.remove(i);
+        }
+    }
+    void key_remove(K k){
+        int i=keys.find(k);
+        if(i!=-1){remove(i);}
+        
+    }
+
+    V give(K k){
+        if(keys.find(k)!=-1){return values.give(keys.find(k));}
+        else{cout<<k<<"?";return V();}//forth style error   
+    }
+
+    int size(){
+        return keys.size();
+    }
+
+    void info(){
+        int i;
+        cout<<"\n\n";
+        for(i=0;i<size();i++){
+            cout<<keys.give(i)<<" : "<<values.give(i)<<"\n";
+        }
+        string r=(resize==1)?"true":"false";
+        cout<<"\ncapacity: "<<keys.cap();
+        cout<<"\nsize: "<<size();
+        cout<<"\nresizable: "<<r<<endl;
+    }
+
 
 };
 
 class Forth{
-    DynArr<float> main{256, true};//program's numeric stack
+    DynArr<float> main{256, false};//program's numeric stack
 
 };
 

@@ -10,16 +10,18 @@ using namespace std;
 */
 
 template<typename T>
-class MyVect{
-    T* arr;
-    int capacity;
-    bool resizable;
-    int itop;
-    public:
-    MyVect(int c=5, bool dynamic=true):capacity(c), resizable(dynamic),itop(-1){arr=new T[capacity];}
-    ~MyVect(){delete[] arr;}
+class DynArr{
+    T* arr; //array of dynamic type and size
+    int capacity;//initial capacity
+    bool resizable;//boolean to control resizability
+    int itop;//top index
 
-    void add(T x){
+    public:
+    DynArr(int c=5, bool dynamic=true):capacity(c), resizable(dynamic),itop(-1){arr=new T[capacity];}
+    ~DynArr(){delete[] arr;}
+
+    void add(T x)//since I'll only need to add to the top of the list I've skipped index-specific adding
+    {
         if(itop==(capacity-1)&&resizable==false){
             cout<<"Overflow";return;
         }
@@ -31,7 +33,7 @@ class MyVect{
     void remove(int i){
         if(itop==-1){cout<<"Underflow";return;}
         --itop;
-        T* tempArr=new T[capacity];
+        T* tempArr=new T[capacity];//be super careful of capacity, it can break the destructor.
         int j;
         for(j=0;j<i;j++){
             tempArr[j]=arr[j];
@@ -40,6 +42,14 @@ class MyVect{
         for(j=i;j<=itop;j++){
             tempArr[j]=arr[j];
         }
+
+        /*
+        arr=tempArr;
+        delete[] tempArr;
+
+        ^This'll cause arr to point to an empty memory location, don't do this.
+        */
+
         delete[] arr;
         arr=tempArr;
     }
@@ -50,6 +60,14 @@ class MyVect{
             tempArr[j]=arr[j];
         }
         capacity=2*capacity;
+
+        /*
+        arr=tempArr;
+        delete[] tempArr;
+
+        ^This'll cause arr to point to an empty memory location, don't do this.
+        */
+
         delete[] arr;
         arr=tempArr;
     }
@@ -72,46 +90,59 @@ class MyVect{
         cout<<"\nsize: "<<size();
         cout<<"\nresizable: "<<r<<endl;
     }
+    int find(T f){
+        int i;
+        for(i=0;i<=itop;i++){
+            if(i!=(itop+1)&&arr[i]==f){return i;}
+            }
+        return -1;   
+    }
 };
 
+template<typename K, typename V>
+class Dictionary{
+    int dict_cap;
+    bool resize;
+    DynArr<K> keys;
+    DynArr<V> values;
 
+    public:
+
+    Dictionary(int capacity=16, bool resize=true):dict_cap(capacity),resize(resize), keys(dict_cap,resize), values(dict_cap, resize){}
+
+    void dict_add(K key, V value){
+        if(keys.find(key)==-1)
+        {
+            keys.add(key);
+            values.add(value);
+        }               
+    }
+    void dict_remove(int i){
+        if(i<keys.size()){
+            keys.remove(i);
+            values.remove(i);
+        }
+    }
+    void dict_remove_key(K k){
+        int i=keys.find(k);
+        if(i!=-1){dict_remove(i);}
+        
+    }
+
+    V give_value(K k){
+       return values[keys.find(k)];
+    }
+
+
+};
 
 
 int main(){
 
-    MyVect<int> a(5, false);
-    a.add(3);
-    a.add(7);
-    a.add(91);
-    a.info();
-    a.remove(2);
-    a.info();
+    int i;
+    for(i=0;i<=5;++i){
+        cout<<i<<"\n";
+    }
+    cout<<i<<"\n";
     
 }
-
-/*template <typename Key, typename Value>
-class Dict{
-   
-    Key k; //key arg for functions
-    Key* arr_k; //array of keys
-    Value v;//value arg for functions
-    Value* arr_v;//array of values
-    int capacity=15;//array capacity
-    int i=-1;
-
-    arr_k= new Key[capacity];
-    arr_v= new Value[capacity];
-
-    template <typename T>
-    void resize(T* &arr, &capacity){
-        
-    }
-
-    public:
-    int x;
-    void assign(k, v){
-
-    }
-    void find(k){}
-
-};*/
