@@ -78,6 +78,10 @@ class DynArr{
     
     }
 
+    int cap(){
+        return capacity;
+    }
+
     void info(){
         int i;
         cout<<"\n[";
@@ -90,6 +94,7 @@ class DynArr{
         cout<<"\nsize: "<<size();
         cout<<"\nresizable: "<<r<<endl;
     }
+
     int find(T f){
         int i;
         for(i=0;i<=itop;i++){
@@ -97,7 +102,14 @@ class DynArr{
             }
         return -1;   
     }
-};
+
+    T give(int i){
+
+        if(i<=itop){return arr[i];}
+        
+        return T();}//num array will never be searched so it's okay
+        
+    };
 
 template<typename K, typename V>
 class Dictionary{
@@ -110,27 +122,44 @@ class Dictionary{
 
     Dictionary(int capacity=16, bool resize=true):dict_cap(capacity),resize(resize), keys(dict_cap,resize), values(dict_cap, resize){}
 
-    void dict_add(K key, V value){
+    void add(K key, V value){
         if(keys.find(key)==-1)
         {
             keys.add(key);
             values.add(value);
         }               
     }
-    void dict_remove(int i){
+    void remove(int i){
         if(i<keys.size()){
             keys.remove(i);
             values.remove(i);
         }
     }
-    void dict_remove_key(K k){
+    void key_remove(K k){
         int i=keys.find(k);
-        if(i!=-1){dict_remove(i);}
+        if(i!=-1){remove(i);}
         
     }
 
-    V give_value(K k){
-       return values[keys.find(k)];
+    V give(K k){
+        if(keys.find(k)!=-1){return values.give(keys.find(k));}
+        else{cout<<k<<"?";return V();}//forth style error   
+    }
+
+    int size(){
+        return keys.size();
+    }
+
+    void info(){
+        int i;
+        cout<<"\n\n";
+        for(i=0;i<size();i++){
+            cout<<keys.give(i)<<" : "<<values.give(i)<<"\n";
+        }
+        string r=(resize==1)?"true":"false";
+        cout<<"\ncapacity: "<<keys.cap();
+        cout<<"\nsize: "<<size();
+        cout<<"\nresizable: "<<r<<endl;
     }
 
 
@@ -139,10 +168,17 @@ class Dictionary{
 
 int main(){
 
-    int i;
-    for(i=0;i<=5;++i){
-        cout<<i<<"\n";
-    }
-    cout<<i<<"\n";
+    DynArr<int> b(2, true);
+    b.add(69);
+    b.add(32);
+    b.add(19);
+
+    Dictionary<string, float> a(2, true);
+    a.add("R", 13.03);
+    a.add("A", 15.11);
+    a.add("M", 27.08);
+
+
+    a.info();
     
 }
